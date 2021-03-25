@@ -1,23 +1,18 @@
-from threading import Lock, current_thread
+from threading import Lock
 class Receptionist:
     def __init__(self, id):
         self.id = id
-        self.queue_length = 0
         self.current_patient = ""
 
         self.lock = Lock()
         patients_list = []
 
     def get_length_queue(self):
-        return self.queue_length
+        return len(self.patients_list)
 
     def join_queue(self, id):
         self.lock.acquire()
-        self.queue_length += 1
-        if not self.patients_list:
-            self.current_patient = id
-        else:
-            self.patients_list.append(id)
+        self.current_patient = id if not self.patients_list else self.patients_list.append(id)
         self.lock.release()
 
     def exit_registration(self, id):
