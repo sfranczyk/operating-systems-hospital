@@ -1,4 +1,5 @@
 import threading
+import random
 import time
 import datetime
 import Location
@@ -25,12 +26,19 @@ class Patient(threading.Thread):
     # Thread method
     # 1) Patient should first choose queue to receptionist
     # 2) Patient should register himself
+    # 3) Patient should choose the chair
+    # 4) Patient should waiting to surgery
     def run(self):
-        time.sleep(1)
+        time.sleep(random.randrange(20, 280))
+
         self.queue_selection()
-        self.behavior_in_the_registration_queue() 
+
+        self.behavior_in_the_registration_queue()
+
         self.register()
+
         self.chair_selection()
+
         self.waiting_for_surgery()
 
 
@@ -51,12 +59,13 @@ class Patient(threading.Thread):
             # TODO maybe patient should compare queue legth of other receptionist
             print("Im waiting!!!")
             time.sleep(1)
+        pass
 
 
     def register(self):
         # TODO Here we should add some bar increase
 
-        self.current_receptionist.registration(self)
+        self.doctors_needed = self.current_receptionist.registration(self)
         pass
 
 
