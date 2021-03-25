@@ -1,14 +1,14 @@
 import threading
 import random
 import time
-import datetime
+from datetime import datetime
 
-import Location
+from Location import Location
 import Receptionist
 import Chair
 
 class Patient(threading.Thread):
-    max_hp = 1000
+    max_hp = 100
 
     def __init__(self, id, hp, name, location, receptionists, chairs):
         super(Patient, self).__init__()
@@ -38,9 +38,9 @@ class Patient(threading.Thread):
 
         self.queue_selection()
 
-        # self.behavior_in_the_registration_queue()
+        #self.behavior_in_the_registration_queue()
 
-        # self.register()
+        self.register()
 
         # self.chair_selection()
 
@@ -50,29 +50,33 @@ class Patient(threading.Thread):
     def queue_selection(self):
         self.current_receptionist = min(self.receptionists, key=lambda r: r.get_length_queue()) # IDK, maybe it's better recording
         self.current_receptionist.join_queue(self.id)
-
-        # reception_with_the_shortest_queue = (self.receptionists[0], self.receptionists[0].get_length_queue())
-        # for rec in self.receptionists[1:]:
-        #     if reception_with_the_shortest_queue[1] > rec.get_length_queue():
-        #         reception_with_the_shortest_queue = (rec, rec.get_length_queue())
-        # self.current_receptionist = reception_with_the_shortest_queue[0]
-        # self.current_receptionist.join_queue(self.id)
-
-
+    
 
     def behavior_in_the_registration_queue(self):
+        number_of_queue_change = 0
+
         while(self.current_receptionist.current_patient != self.id):
-            # TODO maybe patient should compare queue legth of other receptionist
-            print("Im waiting!!!")
+
+            actual_position = self.current_receptionist.get_position_in_queue(self.id)
+
+            if actual_position != -1:                
+                for receptionist in self.receptionists:
+                    if actual_position - number_of_queue_change > receptionist.get_length_queue():                                  
+                        self.current_receptionist = receptionist
+                        receptionist.join_queue(self.id)
+                        number_of_queue_change += 1
+
+            print(f"Im {self.id} waiting!!! in receptionist number: {self.current_receptionist.id}, {actual_position}, {self.current_receptionist.get_length_queue()}")
             time.sleep(1)
-        pass
+        
 
+    def register(self):        
+        self.doctors_needed = self.current_receptionist.registration(self.hp)
 
-    def register(self):
-        # TODO Here we should add some bar increase
+        if self.doctors_needed > 5:
+            self.doctors_needed = 5
 
-        self.doctors_needed = self.current_receptionist.registration(self)
-        pass
+        print(f"Id pacjenta: {self.id} hp: {self.hp} liczba lekarzy: {self.doctors_needed}")
 
 
     def chair_selection(self):
@@ -83,7 +87,8 @@ class Patient(threading.Thread):
         self.location = Location.CORRIDOR
         pass
 
-    def waiting_for_surgery():
+
+    def waiting_for_surgery(self):
         # TODO waiting, can be as nervous moving of patient? xD
         pass
 
