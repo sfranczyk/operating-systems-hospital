@@ -15,15 +15,12 @@ class Receptionist:
         try:
             return self.patients_list.index(id)
         except IndexError:
-            return -1
+            print("IndexError: patient is not in the queue")
+            return False # return -1
 
 
     def get_length_queue(self):
         return len(self.patients_list)
-
-
-    def get_last_index(self):
-        return len(self.patients_list) - 1
 
 
     def join_queue(self, id):
@@ -55,7 +52,8 @@ class Receptionist:
 
     # registration return number of needed doctors
     def registration(self, patient_hp):
-       return int(1 + 1 / patient_hp * 30 + random.uniform(0, 1))
+       number_of_needed_doctors = int(1 + 1 / patient_hp * 30 + random.uniform(0, 1))
+       return number_of_needed_doctors if number_of_needed_doctors < 5 else 5
 
 
     def exit_registration(self, id):

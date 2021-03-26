@@ -56,25 +56,26 @@ class Patient(threading.Thread):
         number_of_queue_change = 0
 
         while(self.current_receptionist.current_patient != self.id):
-
-            actual_position = self.current_receptionist.get_position_in_queue(self.id)
-
-            if actual_position != -1:                
-                for receptionist in self.receptionists:
-                    if actual_position - number_of_queue_change > receptionist.get_length_queue():                                  
-                        self.current_receptionist = receptionist
-                        receptionist.join_queue(self.id)
-                        number_of_queue_change += 1
+            for receptionist in self.receptionists:
+                if self.current_receptionist.get_position_in_queue(self.id) - number_of_queue_change > receptionist.get_length_queue():                                  
+                    self.change_queue(receptionist)
+                    number_of_queue_change += 1
 
             print(f"Im {self.id} waiting!!! in receptionist number: {self.current_receptionist.id}, {actual_position}, {self.current_receptionist.get_length_queue()}")
-            time.sleep(1)
+            time.sleep(1) #TODO Increase time range
+
+
+    def change_queue(self, new_queue):
+        if self.current_receptionist:
+            self.current_receptionist.exit_queue(self.id)
+
+        self.current_receptionist = new_queue
+        new_queue.join_queue(self.id)
         
+
 
     def register(self):        
         self.doctors_needed = self.current_receptionist.registration(self.hp)
-
-        if self.doctors_needed > 5:
-            self.doctors_needed = 5
 
         print(f"Id pacjenta: {self.id} hp: {self.hp} liczba lekarzy: {self.doctors_needed}")
 
