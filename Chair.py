@@ -7,8 +7,13 @@ class Chair:
         pass
 
     def sit_down(self, patient):
-        self.place_taken.acquire()
-        self.sitting_patient = patient
+        if self.place_taken.acquire(False):
+            self.sitting_patient = patient
+            return True
+        else:
+            return False
+
+        
 
     def take_surgery(self):
         patient = self.sitting_patient = None

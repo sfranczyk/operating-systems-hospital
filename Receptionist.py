@@ -33,12 +33,6 @@ class Receptionist:
         finally:
             self.lock.release()
 
-        print(f"I am receptinist {self.id}, patient {id}, and I have patient {self.current_patient}")
-        for p in self.patients_list:
-            print(p)
-        
-        print("asa", id, " ", self.current_patient)
-
 
     def exit_queue(self, id):
         self.lock.acquire()
@@ -50,7 +44,6 @@ class Receptionist:
             self.lock.release()
 
 
-    # registration return number of needed doctors
     def registration(self, patient_hp):
        number_of_needed_doctors = int(1 + 1 / patient_hp * 30 + random.uniform(0, 1))
        return number_of_needed_doctors if number_of_needed_doctors < 5 else 5
