@@ -6,6 +6,8 @@ from datetime import datetime
 from Location import Location
 import Receptionist
 import Chair
+from threading import Lock
+
 
 class Patient(threading.Thread):
     max_hp = 100
@@ -29,19 +31,19 @@ class Patient(threading.Thread):
 
         print(f"Created patient {self.name}, and he has such an ID: {self.id}")
 
-
     # Thread method
     # 1) Patient should first choose queue to receptionist
     # 2) Patient should register himself
     # 3) Patient should choose the chair
     # 4) Patient should waiting to surgery
+
     def run(self):
         time.sleep(random.uniform(0.02, 2))
         print(f"Hello, I am {self.name}, and I have such an ID: {self.id}")
 
         self.queue_selection()
 
-        #self.behavior_in_the_registration_queue()
+        # self.behavior_in_the_registration_queue()
 
         self.register()
 
@@ -49,27 +51,27 @@ class Patient(threading.Thread):
 
         # self.waiting_for_surgery()
 
-
     # Patient selects queue to receptionist
+
     def queue_selection(self):
-        self.current_receptionist = min(self.receptionists, key=lambda r: r.get_length_queue())
+        self.current_receptionist = min(
+            self.receptionists, key=lambda r: r.get_length_queue())
         self.current_receptionist.join_queue(self.id)
-    
 
     # Method describe patient's behavior in queue to receptionist
     # Patient could change queue if it be better chojce, but number of change is limited
+
     def behavior_in_the_registration_queue(self):
         number_of_queue_change = 0
 
         while(self.current_receptionist.current_patient != self.id):
             for receptionist in self.receptionists:
-                if self.current_receptionist.get_position_in_queue(self.id) - number_of_queue_change > receptionist.get_length_queue():                                  
+                if self.current_receptionist.get_position_in_queue(self.id) - number_of_queue_change > receptionist.get_length_queue():
                     self.change_queue(receptionist)
                     number_of_queue_change += 1
 
             # TEST print(f"Im {self.id} waiting!!! in receptionist number: {self.current_receptionist.id}, {actual_position}, {self.current_receptionist.get_length_queue()}")
-            time.sleep(1) #TODO Increase time range
-
+            time.sleep(1)  # TODO Increase time range
 
     def change_queue(self, new_queue):
         if self.current_receptionist:
@@ -77,7 +79,6 @@ class Patient(threading.Thread):
 
         self.current_receptionist = new_queue
         new_queue.join_queue(self.id)
-        
 
     def register(self):
         self.location = Location.RECEPTION
@@ -87,10 +88,10 @@ class Patient(threading.Thread):
             time.sleep(1)
             self.points += 1
 
-        self.doctors_needed = self.current_receptionist.registration(self.health_points)
+        self.doctors_needed = self.current_receptionist.registration(
+            self.health_points)
 
         # TEST print(f"Id pacjenta: {self.id} hp: {self.health_points} liczba lekarzy: {self.doctors_needed}")
-
 
     def chair_selection(self):
         is_sitting = False
@@ -105,8 +106,7 @@ class Patient(threading.Thread):
         self.current_receptionist.exit_registration(id)
         self.location = Location.CORRIDOR
 
-
     def waiting_for_surgery(self):
         # TODO waiting, can be as nervous moving of patient? xD
         pass
-
+    

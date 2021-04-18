@@ -11,9 +11,7 @@ class Chair:
             self.sitting_patient = patient
             return True
         else:
-            return False
-
-        
+            return False        
 
     def take_surgery(self):
         patient = self.sitting_patient = None
