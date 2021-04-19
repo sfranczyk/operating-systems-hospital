@@ -17,3 +17,6 @@ class doctor(threading.Thread):
     def run(self):
         time.sleep(1)
 
+    def take_break(self):
+        pass
+
