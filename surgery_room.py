@@ -2,25 +2,29 @@ import threading
 from Location import Location
 
 class surgery_room(threading.Thread):
-    def __init__(self, doctors, patient):
-        self.patient_doctors = doctors
-        self.patient = patient
+    def __init__(self):
+        self.is_used = False
+        self.surgery_stopped = False
+        self.doctors_number = 0
+        self.lock = threading.Lock()
 
-    def release_doctors(self):
-        for doctor in self.patient_doctors:
-            doctor.choosen_patient = None
-            doctor.location = Location.CORRIDOR
+    def take_room(self, patient, doctors_number):
+        self.doctors_number = doctors_number
+        self.is_used = True
+        self.surgery_stopped = False
 
-    def heal_patient(self):
-        while self.patient.health_points < 100:
-            for doctor in self.patient_doctors:
-                if doctor.energy_points > 0:
-                    self.patient.health_points += 1
-                    doctor.energy_points -= 1
-                else:
-                    doctor.take_break()
-        
-        self.patient.doctors_needed = 0
-        self.patient.current_doctors_number = 0
-        
-        self.release_doctors()
+    def stop_surgery(self):
+        self.surgery_stopped = True
+
+    def start_surgery(self):
+        self.surgery_stopped = False
+
+    def complete_surgery(self):
+        self.lock.acquire()
+        try:
+            self.doctors_number -= 1
+            if self.doctors_number == 0:
+                self.is_used = False
+                self.patient = None
+        finally:
+            self.lock.release()

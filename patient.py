@@ -51,6 +51,8 @@ class Patient(threading.Thread):
 
         # self.waiting_for_surgery()
 
+        self.join()
+
     # Patient selects queue to receptionist
 
     def queue_selection(self):
