@@ -7,7 +7,7 @@ class doctor(threading.Thread):
     max_energy_points = 100   
 
     def __init__(self, energy_points, chairs, location):
-        self._energy_points = energy_points
+        self.energy_points = energy_points
         self.chairs = chairs
         self.choosen_patient = None
         self.location = location
