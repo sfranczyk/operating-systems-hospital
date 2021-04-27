@@ -1,27 +1,24 @@
-from coffee_machine import coffee_machine
-from patient import Patient
-from surgery_room import surgery_room
+from CoffeeMachine import CoffeeMachine
+from Patient import Patient
+from SurgeryRoom import SurgeryRoom
 from Location import Location
 import threading
-import time
-from datetime import datetime
-from threading import Lock
 
 
-class doctor(threading.Thread):
+class Doctor(threading.Thread):
     max_energy_points = 100
 
     def __init__(self, id, name, energy_points, chairs, location, coffee_machines):
-        super(doctor, self).__init__()
+        super(Doctor, self).__init__()
         self.id = id
         self.name = name
         self.energy_points = energy_points
         self.chairs = chairs
         self.choosen_patient: Patient = None
         self.location = location
-        self.surgery_room: surgery_room = None
+        self.surgery_room: SurgeryRoom = None
         self.coffee_machines = coffee_machines
-        self.current_coffee_machine: coffee_machine = None
+        self.current_coffee_machine: CoffeeMachine = None
 
     def run(self):
         while(True):

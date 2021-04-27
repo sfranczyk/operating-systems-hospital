@@ -1,8 +1,7 @@
-from patient import Patient
+from Patient import Patient
 import threading
-from Location import Location
 
-class surgery_room(threading.Thread):
+class SurgeryRoom(threading.Thread):
     def __init__(self):
         self.is_used = False
         self.surgery_stopped = False

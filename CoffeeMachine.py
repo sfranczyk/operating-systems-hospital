@@ -1,6 +1,6 @@
 from threading import Lock
 
-class coffee_machine:
+class CoffeeMachine:
     
     _energy_points = 1
     
@@ -16,7 +16,7 @@ class coffee_machine:
 
 
     def drink_coffee():
-        return coffee_machine._energy_points
+        return CoffeeMachine._energy_points
 
     def release(self):
         self.doctor_id = None
