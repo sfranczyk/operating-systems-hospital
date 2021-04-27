@@ -6,24 +6,14 @@ from datetime import datetime
 from Location import Location
 import Receptionist
 import Chair
+import Statistics
+from Phase import Phase
 from threading import Lock
-
-from enum import Enum
-class Phase(Enum):
-    START = 0
-    QUEUE = 1
-    REGISTRATION = 2
-    CHAIR_SELECION = 3
-    WAITING_FOR_SURGERY = 4
-    SURGERY = 5
-    DEAD = 6
-    HEALED = 7
-
 
 class Patient(threading.Thread):
     max_hp = 100
 
-    def __init__(self, id, hp, name, location, receptionists, chairs):
+    def __init__(self, id, hp, name, location, receptionists, chairs, statistics):
         super(Patient, self).__init__()
         self.id = id
         self.name = name
@@ -42,6 +32,8 @@ class Patient(threading.Thread):
         self.current_receptionist = None
         self.time_to_start_waiting_for_the_surgery = None
 
+        self.statistics: Statistics = statistics
+
         print(f"Created patient {self.name}, and he has such an ID: {self.id}")
 
     # Thread method
@@ -51,9 +43,11 @@ class Patient(threading.Thread):
     # 4) Patient should waiting to surgery
 
     def run(self):
-        while(0 < self.health_points < Patient.max_hp):
+        while(0 < self.health_points < Patient.max_hp):                     
 
             if self.phase == Phase.START:
+                self.statistics.new_patient()
+
                 time.sleep(random.uniform(0.02, 2))
                 print(f"Hello, I am {self.name}, and I have such an ID: {self.id}")
                 self.queue_selection()
@@ -88,12 +82,32 @@ class Patient(threading.Thread):
 
             if self.phase == Phase.WAITING_FOR_SURGERY:
                 self.waiting_for_surgery()
+
             if self.phase == Phase.SURGERY:
                 pass
-            if self.phase == Phase.HEALED or self.phase == Phase.DEAD:
-                pass
+
+            self.manage_patient_health_point()
+
+            if self.phase == Phase.HEALED:
+                self.statistics.patient_healed()
+                
+            if self.phase == Phase.DEAD:
+                self.statistics.patient_died()
+
             self.join()
 
+
+    def manage_patient_health_point(self):
+
+        if self.health_points == Patient.max_hp:
+            self.phase == Phase.HEALED
+
+        if self.phase != Phase.DEAD and self.phase != Phase.HEALED and self.phase != Phase.SURGERY:
+            self.health_points -= 1
+
+        if self.health_points == 0:
+            self.phase == Phase.DEAD
+       
 
     # Patient selects queue to receptionist
     def queue_selection(self):
