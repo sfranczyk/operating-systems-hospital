@@ -15,8 +15,8 @@ class Patient(threading.Thread):
     def __init__(self, id, hp, name, location, receptionists, chairs):
         super(Patient, self).__init__()
         self.id = id
-        self.health_points = hp
         self.name = name
+        self.health_points = hp
         self.location = location
         self.receptionists = receptionists
         self.chairs = chairs
