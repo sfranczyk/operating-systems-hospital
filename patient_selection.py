@@ -3,7 +3,8 @@ import time
 from datetime import datetime
 from threading import Lock
 from Location import Location
-from doctor import doctor
+from Doctor import Doctor
+import SurgeryRoom
 
 
 class patient_selection(threading.Thread):
@@ -40,7 +41,8 @@ class patient_selection(threading.Thread):
 
     def start_surgery(self, chair):
 
-        free_room = None
+        free_room: SurgeryRoom = None
+
         while not free_room:
             for surgery_room in self.surgery_rooms:
                 if surgery_room.is_used == False:
@@ -50,10 +52,10 @@ class patient_selection(threading.Thread):
         patient = chair.take_surgery()
         patient.location = Location.SURGERY_ROOM
 
+        doctors_to_surgery = []
+
         for doctor in self.doctors:
             if doctor.choosen_patient == patient:
-                doctor.surgery_room = free_room
-            # if doctor.choosen_patient == patient:
-            #     doctor.location = Location.SURGERY_ROOM
+                doctors_to_surgery.append(doctor)
         
-        free_room.take_room()
+        free_room.take_room(patient, doctors_to_surgery);

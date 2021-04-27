@@ -1,8 +1,7 @@
 from Receptionist import Receptionist
 from Location import Location
-from patient import Patient
+from Patient import Patient
 from Chair import Chair
-import threading
 
 def main():
     print("Helicopter")
