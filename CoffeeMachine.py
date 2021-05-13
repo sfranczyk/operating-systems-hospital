@@ -2,7 +2,7 @@ from threading import Lock
 
 class CoffeeMachine:
     
-    _energy_points = 1
+    _energy_points = 10
     
     def __init__(self):
         self.lock = Lock()
@@ -15,7 +15,7 @@ class CoffeeMachine:
         return False
 
 
-    def drink_coffee():
+    def drink_coffee(self):
         return CoffeeMachine._energy_points
 
     def release(self):

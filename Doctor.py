@@ -6,6 +6,7 @@ from datetime import datetime
 import threading
 import random
 import time
+from Phase import Phase
 
 
 class Doctor(threading.Thread):
@@ -28,14 +29,11 @@ class Doctor(threading.Thread):
         while(True):
 
             if self.location == Location.CORRIDOR:
-                print(f'{self.name} jestem na korytarzu')
+
                 if self.choosen_patient == None:
-                    print(f'{self.name} szukam pacjenta')
                     self.choose_patient()
                 else:
-                    print(
-                        f'{self.name}, moj pacjent {self.choosen_patient.name} ma {self.choosen_patient.current_doctors_number} lekarzy')
-                    if self.choosen_patient.current_doctors_number >= self.choosen_patient.doctors_needed:
+                    if self.choosen_patient.current_doctors_number >= self.choosen_patient.doctors_needed:                        
                         self.start_surgery(self.choosen_patient)
 
                 if self.surgery_room:
@@ -61,13 +59,14 @@ class Doctor(threading.Thread):
                         self.surgery_room.start_surgery()
 
                 else:
-                    self.choosen_patient.health_points += 1
-                    self.energy_points -= 1
-
-                if self.choosen_patient.health_points >= Patient.max_hp:
-                    self.surgery_room.complete_surgery()
-
+                    if self.choosen_patient != None:
+                        self.choosen_patient.health_points += 1
+                        self.energy_points -= 1
+                        print(f"{self.choosen_patient.name} jest operowany w sali {self.surgery_room.id} przez {self.name}")
+                                        
             if self.location == Location.MEDICAL_ROOM:
+                print(f"{self.name} PIJE KAWE i mam {self.energy_points} punktow energii")
+
                 if not self.current_coffee_machine:
                     for machine in self.coffee_machines:
                         if(machine.try_take(self.id)):
@@ -76,13 +75,14 @@ class Doctor(threading.Thread):
 
                 if self.current_coffee_machine and self.energy_points < self.max_energy_points:
                     self.energy_points += self.current_coffee_machine.drink_coffee()
+                    self.choosen_patient.health_points -= 1
 
                 if self.current_coffee_machine and self.energy_points >= self.max_energy_points:
                     self.current_coffee_machine.release()
                     self.current_coffee_machine = None
                     self.location = Location.SURGERY_ROOM
 
-            time.sleep(random.uniform(2, 5))
+            time.sleep(random.uniform(1, 3))
 
     def choose_patient(self):
         most_valuable_patient = None
@@ -90,25 +90,18 @@ class Doctor(threading.Thread):
 
         for chair in self.chairs:
             if chair.sitting_patient != None:
-                print('na krzesle siedzi pacjent')
-                if chair.sitting_patient.current_doctors < chair.sitting_patient.doctors_needed:
-                    actual_points = 2 * chair.sitting_patient.health_points + 0.5 * \
-                        (datetime.now() -
-                         chair.sitting_patient.time_to_start_waiting_for_the_surgery)
+
+                if chair.sitting_patient.current_doctors_number < chair.sitting_patient.doctors_needed:
+                    actual_points = 2 * chair.sitting_patient.health_points
                     if actual_points > max_points:
                         max_points = actual_points
                         most_valuable_patient = chair.sitting_patient
-            else:
-                print('na krzesle nie ma pacjenta')
-
 
         if most_valuable_patient != None:
-            print(f'znaleziono {most_valuable_patient.name}')
-            most_valuable_patient.current_doctors += 1
+            print(f'{self.name} znalazl {most_valuable_patient.name}')
+            most_valuable_patient.current_doctors_number += 1
             most_valuable_patient.doctors.append(self)
             self.choosen_patient = most_valuable_patient
-        else:
-            print('nie znaleziono pacjenta')
 
     def start_surgery(self, patient):
 
@@ -120,6 +113,6 @@ class Doctor(threading.Thread):
                     free_room = surgery_room
                     break
 
+        patient.phase = Phase.SURGERY
         self.surgery_room = free_room
-
         self.surgery_room.take_room(patient, patient.doctors)
