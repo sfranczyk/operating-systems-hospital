@@ -18,7 +18,13 @@ class Statistics:
         Statistics.patients_dead += 1
 
     def percentage_of_healed(self):
-        return Statistics.patient_healed / Statistics.patients_total
+        return Statistics.patients_healed / Statistics.patients_total * 100.0
 
     def percentage_of_dead(self):
-        return Statistics.patient_died / Statistics.patients_total
+        return Statistics.patients_dead / Statistics.patients_total * 100.0
+
+    def print_actual_statistics(self):
+        dead_percentage = self.percentage_of_dead()
+        healed_percentage = self.percentage_of_healed()
+
+        print(f'Do szpitala przybylo {self.patients_total} pacjentow, umarlo {dead_percentage}% z nich, zostalo uleczonych {healed_percentage}% z nich, w trakcie leczenia pozostaje {self.patients_during_treatment} pacjentow')

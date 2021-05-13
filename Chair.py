@@ -8,11 +8,11 @@ class Chair:
 
     def sit_down(self, patient):
         if self.place_taken.acquire(False):
-            self.sitting_patient = patient
+            self.sitting_patient = patient            
             return True
         else:
             return False        
-
+        
     def take_surgery(self):
         patient = self.sitting_patient = None
         self.sitting_patient = None
