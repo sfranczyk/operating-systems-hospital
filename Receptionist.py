@@ -54,9 +54,10 @@ class Receptionist:
         try:
             if (id == self.current_patient):
                 if not self.patients_list:
-                    self.current_patient = ""  
+                    self.current_patient = None  
                 else:
-                    self.current_patient = self.patients_list.pop(0)
+                    self.patients_list.pop(0)
+                    self.current_patient = self.patients_list[0]
             else:
                 try:
                     self.patients_list.remove(id)
