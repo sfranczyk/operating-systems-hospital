@@ -12,7 +12,7 @@ from Phase import Phase
 class Doctor(threading.Thread):
     max_energy_points = 100
 
-    def __init__(self, id, name, energy_points, chairs, location, coffee_machines, surgery_rooms):
+    def __init__(self, id, name, energy_points, chairs, location, coffee_machines, surgery_rooms, interface):
         super(Doctor, self).__init__()
         self.id = id
         self.name = name
@@ -24,9 +24,15 @@ class Doctor(threading.Thread):
         self.surgery_rooms = surgery_rooms
         self.coffee_machines = coffee_machines
         self.current_coffee_machine: CoffeeMachine = None
+        self.interface = interface
 
     def run(self):
         while(True):
+
+            self.interface.displayText(self.name, 100, self.id, length=30)
+            self.interface.displayText(str(self.energy_points), 130, self.id, length=25, color=2)
+            if not self.choosen_patient == None:
+                self.interface.displayText(self.choosen_patient.name, 155, self.id, length=45)             
 
             if self.location == Location.CORRIDOR:
 
@@ -60,13 +66,12 @@ class Doctor(threading.Thread):
 
                 else:
                     if self.choosen_patient != None:
+                        self.choosen_patient.phase = Phase.SURGERY
                         self.choosen_patient.health_points += 1
                         self.energy_points -= 1
-                        print(f"{self.choosen_patient.name} jest operowany w sali {self.surgery_room.id} przez {self.name}")
-                                        
+                                                                
             if self.location == Location.MEDICAL_ROOM:
-                print(f"{self.name} PIJE KAWE i mam {self.energy_points} punktow energii")
-
+                
                 if not self.current_coffee_machine:
                     for machine in self.coffee_machines:
                         if(machine.try_take(self.id)):
@@ -97,8 +102,7 @@ class Doctor(threading.Thread):
                         max_points = actual_points
                         most_valuable_patient = chair.sitting_patient
 
-        if most_valuable_patient != None:
-            print(f'{self.name} znalazl {most_valuable_patient.name}')
+        if most_valuable_patient != None:            
             most_valuable_patient.current_doctors_number += 1
             most_valuable_patient.doctors.append(self)
             self.choosen_patient = most_valuable_patient

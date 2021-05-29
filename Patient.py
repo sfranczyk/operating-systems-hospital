@@ -14,7 +14,7 @@ from threading import Lock
 class Patient(threading.Thread):
     max_hp = 100
 
-    def __init__(self, id, hp, name, location, receptionists, chairs, statistics):
+    def __init__(self, id, hp, name, location, receptionists, chairs, statistics, interface):
         super(Patient, self).__init__()
         self.id = id
         self.name = name
@@ -32,6 +32,7 @@ class Patient(threading.Thread):
         self.time_to_start_waiting_for_the_surgery = None
 
         self.statistics: Statistics = statistics
+        self.interface = interface
 
     # Thread method
     # 1) Patient should first choose queue to receptionist
@@ -42,8 +43,10 @@ class Patient(threading.Thread):
     def run(self):
         while(0 < self.health_points < Patient.max_hp):
 
-            print(f"{self.name} mam {self.health_points} zdrowia")
-
+            self.interface.displayText(self.name, 0, int(self.id), length=35)
+            self.interface.displayText(str(self.health_points), 35, int(self.id), length=15, color=3)
+            self.interface.displayText(str(self.phase.name), 50, int(self.id), length=50)
+           
             if self.phase == Phase.START:
                 self.statistics.new_patient()
 
@@ -52,7 +55,7 @@ class Patient(threading.Thread):
                 self.phase = Phase.QUEUE
 
             if self.phase == Phase.QUEUE:
-                print(f"{self.name} stoje w kolejce numer")                
+                                
                 if self.current_receptionist.current_patient != self.id:                    
                     self.behavior_in_the_registration_queue()                    
                     time.sleep(random.uniform(1, 3))
@@ -61,18 +64,18 @@ class Patient(threading.Thread):
                     self.phase = Phase.REGISTRATION                    
 
             if self.phase == Phase.REGISTRATION:                
-                print(f"{self.name} rejestruje sie")
+               
                 if self.points < 100:
                     self.points += 10
                     time.sleep(random.uniform(1, 3))
                 else:
                     self.doctors_needed = self.current_receptionist.registration(
                         self.health_points)
-                    print(f"{self.name} potrzebuje {self.doctors_needed} lekarzy")
+                    
                     self.phase = Phase.CHAIR_SELECION
 
             if self.phase == Phase.CHAIR_SELECION:
-                print(f"{self.name} szukam krzesla")
+                
                 if not self.is_sitting:
                     self.chair_selection()
                     time.sleep(random.uniform(1, 3))
@@ -82,7 +85,7 @@ class Patient(threading.Thread):
                     self.phase = Phase.WAITING_FOR_SURGERY
 
             if self.phase == Phase.WAITING_FOR_SURGERY:
-                print(f"{self.name} czekam na operacje")
+                
                 self.waiting_for_surgery()
                 time.sleep(random.uniform(1, 3))
 
@@ -98,15 +101,14 @@ class Patient(threading.Thread):
                 doctor.location = Location.CORRIDOR
 
         if self.phase == Phase.HEALED or self.health_points >= self.max_hp:
-            self.statistics.patient_healed()
-            print(f'{self.name} uleczony')
+            self.statistics.patient_healed()            
 
         if self.phase == Phase.DEAD or self.health_points <= 0:
-            self.statistics.patient_died()
-            print(f'{self.name} umiera')
+            self.statistics.patient_died()            
 
-        self.statistics.print_actual_statistics()
-
+        self.interface.displayText('Wszyscy pacjenci: ' + str(self.statistics.patients_total), 0, 12)
+        self.interface.displayText('Procent wyleczonych: ' + str(self.statistics.percentage_of_healed), 0, 13)
+        self.interface.displayText('Procent zmarlych: ' + str(self.statistics.percentage_of_dead), 0, 14)
         
     def manage_patient_health_point(self):
 

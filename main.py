@@ -1,3 +1,4 @@
+from ui import UserInterface
 from SurgeryRoom import SurgeryRoom
 from CoffeeMachine import CoffeeMachine
 from Doctor import Doctor
@@ -10,6 +11,8 @@ from Chair import Chair
 
 def main():
 
+    interface = UserInterface()
+
     r1 = Receptionist(id=1)
     r2 = Receptionist(id=2)
     ch1 = Chair(_id=1)
@@ -19,22 +22,22 @@ def main():
     r_list = [r1, r2]
     ch_list = [ch1, ch2]
 
-    p1 = Patient(id="aaa", hp=85, name="Patric", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p2 = Patient(id="bbb", hp=93, name="Danil", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p3 = Patient(id="ccc", hp=30, name="Bernard", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p4 = Patient(id="ddd", hp=41, name="Stefan", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p5 = Patient(id="eee", hp=12, name="Carl", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p6 = Patient(id="fff", hp=92, name="Joe", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p7 = Patient(id="ggg", hp=55, name="Steven", location=Location.RECEPTION,
-                 receptionists=r_list, chairs=ch_list, statistics=statistics)
+    p1 = Patient(id=1, hp=85, name="Patric", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p2 = Patient(id=2, hp=93, name="Danil", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p3 = Patient(id=3, hp=30, name="Bernard", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p4 = Patient(id=4, hp=41, name="Stefan", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p5 = Patient(id=5, hp=12, name="Carl", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p6 = Patient(id=6, hp=92, name="Joe", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
+    p7 = Patient(id=7, hp=55, name="Steven", location=Location.RECEPTION,
+                 receptionists=r_list, chairs=ch_list, statistics=statistics, interface=interface)
 
-    p_list = [p1, p2]
+    p_list = [p1, p2, p3, p4, p5, p6, p7]
 
     coffee1 = CoffeeMachine()
     coffee2 = CoffeeMachine()
@@ -44,18 +47,26 @@ def main():
     coffee_list = [coffee1, coffee2]
     surgery_rooms = [surgeryRoom1, surgeryRoom2]
 
-    d1 = Doctor(id="doctor_1", name="Dr Nowak", energy_points=5, chairs=ch_list,
-                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d2 = Doctor(id="doctor_2", name="Dr Kowalski", energy_points=5, chairs=ch_list,
-                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d3 = Doctor(id="doctor_3", name="Dr Wozniak", energy_points=5, chairs=ch_list,
-                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d4 = Doctor(id="doctor_4", name="Profesor Kowalczyk", energy_points=5, chairs=ch_list,
-                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d5 = Doctor(id="doctor_5", name="Dr Zelazna", energy_points=5, chairs=ch_list,
-                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
+    d1 = Doctor(id=1, name="Dr Nowak", energy_points=5, chairs=ch_list,
+                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms, interface=interface)
+    d2 = Doctor(id=2, name="Dr Kowalski", energy_points=5, chairs=ch_list,
+                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms, interface=interface)
+    d3 = Doctor(id=3, name="Dr Wozniak", energy_points=5, chairs=ch_list,
+                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms, interface=interface)
+    d4 = Doctor(id=4, name="Profesor Kowalczyk", energy_points=5, chairs=ch_list,
+                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms, interface=interface)
+    d5 = Doctor(id=5, name="Dr Zelazna", energy_points=5, chairs=ch_list,
+                location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms, interface=interface)
 
     doctor_list = [d1, d2, d3, d4, d5]
+
+    interface.displayText('Pacjent', 0, 0)
+    interface.displayText('Punkty zycia', 35, 0)
+    interface.displayText('Lokalizacja', 50, 0)
+
+    interface.displayText('Lekarz', 100, 0)
+    interface.displayText('Punkty energii', 130, 0)
+    interface.displayText('Leczony pacjent', 155, 0)
 
     for doctor in doctor_list:
         doctor.start()
@@ -68,7 +79,6 @@ def main():
 
     for doctor in doctor_list:
         doctor.join()
-
 
 if __name__ == "__main__":
     main()

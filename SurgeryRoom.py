@@ -28,8 +28,7 @@ class SurgeryRoom(threading.Thread):
     def start_surgery(self):
         self.surgery_stopped = False
 
-    def complete_surgery(self):
-        print('Operacja zakonczona')
+    def complete_surgery(self):        
         self.lock.acquire()
         try:
             self.doctors_number -= 1
