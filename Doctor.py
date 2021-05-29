@@ -32,7 +32,17 @@ class Doctor(threading.Thread):
             self.interface.displayText(self.name, 100, self.id, length=30)
             self.interface.displayText(str(self.energy_points), 130, self.id, length=25, color=2)
             if not self.choosen_patient == None:
-                self.interface.displayText(self.choosen_patient.name, 155, self.id, length=45)             
+                self.interface.displayText(self.choosen_patient.name, 155, self.id, length=20)             
+            self.interface.displayText(str(self.location.name), 175, self.id, length=20)
+            if not self.surgery_room == None:
+                self.interface.displayText(str(self.surgery_room.id), 195, self.id, length=5)
+
+            for i in range(len(self.coffee_machines)):
+                if self.coffee_machines[i].doctor_id == None:
+                    self.interface.displayText('Machine number: ' + str(i) + ' is free', 0, 15 + i, length=25)
+                else:
+                    self.interface.displayText('Machine number: ' + str(i) + ' is taken',0, 15 + i, length=25)
+
 
             if self.location == Location.CORRIDOR:
 

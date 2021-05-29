@@ -47,6 +47,12 @@ class Patient(threading.Thread):
             self.interface.displayText(str(self.health_points), 35, int(self.id), length=15, color=3)
             self.interface.displayText(str(self.phase.name), 50, int(self.id), length=50)
            
+            for i in range(len(self.chairs)):
+                if self.chairs[i].sitting_patient == None:
+                    self.interface.displayText('Chair number: ' + str(i + 1) + ' is free', 0, 20 + i, length=25)
+                else:
+                    self.interface.displayText('Chair number: ' + str(i + 1) + ' is taken', 0, 20 + i, length=25)
+
             if self.phase == Phase.START:
                 self.statistics.new_patient()
 
@@ -107,8 +113,8 @@ class Patient(threading.Thread):
             self.statistics.patient_died()            
 
         self.interface.displayText('Wszyscy pacjenci: ' + str(self.statistics.patients_total), 0, 12)
-        self.interface.displayText('Procent wyleczonych: ' + str(self.statistics.percentage_of_healed), 0, 13)
-        self.interface.displayText('Procent zmarlych: ' + str(self.statistics.percentage_of_dead), 0, 14)
+        self.interface.displayText('Wyleczeni: ' + str(self.statistics.patients_healed), 0, 13)
+        self.interface.displayText('Zmarli: ' + str(self.statistics.patients_dead), 0, 14)
         
     def manage_patient_health_point(self):
 

@@ -67,6 +67,8 @@ def main():
     interface.displayText('Lekarz', 100, 0)
     interface.displayText('Punkty energii', 130, 0)
     interface.displayText('Leczony pacjent', 155, 0)
+    interface.displayText('Lokalizacja', 175, 0)
+    interface.displayText('Sala', 195, 0)
 
     for doctor in doctor_list:
         doctor.start()
