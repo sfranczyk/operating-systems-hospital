@@ -15,9 +15,10 @@ class Receptionist:
     def get_position_in_queue(self, id):
         try:
             return self.patients_list.index(id)
-        except IndexError:
-            print("IndexError: patient is not in the queue")
-            return False # return -1
+        except IndexError:            
+            return -1
+        except ValueError:
+            return -1
 
 
     def get_length_queue(self):
@@ -59,7 +60,8 @@ class Receptionist:
                     self.current_patient = None  
                 else:
                     self.patients_list.pop(0)
-                    self.current_patient = self.patients_list[0]
+                    if len(self.patients_list) > 0:
+                        self.current_patient = self.patients_list[0]
             else:
                 try:
                     self.patients_list.remove(id)
