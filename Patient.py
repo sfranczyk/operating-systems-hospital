@@ -30,6 +30,7 @@ class Patient(threading.Thread):
         self.current_doctors_number = 0
         self.current_receptionist = None
         self.time_to_start_waiting_for_the_surgery = None
+        self.surgery_room = None
 
         self.statistics: Statistics = statistics
         

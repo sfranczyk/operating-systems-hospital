@@ -1,3 +1,4 @@
+from Location import Location
 from Patient import Patient
 import threading
 
@@ -19,6 +20,9 @@ class SurgeryRoom(threading.Thread):
             self.patient = patient
             self.doctors_number = len(self.doctors)
             self.is_used = True
+
+            for doctor in self.doctors:
+                doctor.surgery_room = self
         finally:
             self.lock.release()
 

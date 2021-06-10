@@ -58,7 +58,7 @@ class UserInterface(threading.Thread):
         self.displayText(str(doctor.energy_points), 130, doctor.id, length=25, color=2)
         if not doctor.choosen_patient == None:
             self.displayText(doctor.choosen_patient.name, 155, doctor.id, length=20)
-            self.displayText(str(doctor.location.name), 175, doctor.id, length=20)
+        self.displayText(str(doctor.location.name), 175, doctor.id, length=20)
         if not doctor.surgery_room == None:
             self.displayText(str(doctor.surgery_room.id), 195, doctor.id, length=5)
 
@@ -82,9 +82,9 @@ class UserInterface(threading.Thread):
         self.displayText("Coffee machine number: " + str(coffee_machine.id) + " is ", 0, 17 + coffee_machine.id)
 
         if coffee_machine.doctor_id == None:
-            self.displayText(" free", 30, 17 + coffee_machine.id)
+            self.displayText(" free", 28, 17 + coffee_machine.id)
         else:
-            self.displayText(" taken by: " + str(coffee_machine.doctor_name), 30, 17 + coffee_machine.id)
+            self.displayText(" taken by: " + str(coffee_machine.doctor_name), 28, 17 + coffee_machine.id)
 
     def receptionistInfo(self, receptionist):
         self.displayText("Receptionist number: " + str(receptionist.id) + " is ", 0, 20 + receptionist.id)
@@ -92,7 +92,7 @@ class UserInterface(threading.Thread):
         if receptionist.current_patient == None:
             self.displayText(" free", 25, 20 + receptionist.id)
         else:
-            self.displayText(" is taken by: " + receptionist.current_patient_name, 25, 20 + receptionist.id)
+            self.displayText(" taken by: " + receptionist.current_patient_name, 25, 20 + receptionist.id)
 
     def terminate(self):
         curses.nocbreak()

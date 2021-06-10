@@ -61,7 +61,7 @@ class Doctor(threading.Thread):
                 else:
                     if self.choosen_patient != None:
                         self.choosen_patient.phase = Phase.SURGERY
-                        self.choosen_patient.health_points += 1
+                        self.choosen_patient.health_points += 5
                         self.energy_points -= 1
                                                                 
             if self.location == Location.MEDICAL_ROOM:
@@ -104,13 +104,15 @@ class Doctor(threading.Thread):
     def start_surgery(self, patient):
 
         free_room: SurgeryRoom = None
-
-        while not free_room:
+       
+        while not free_room and patient.surgery_room == None:
             for surgery_room in self.surgery_rooms:
                 if surgery_room.is_used == False:
                     free_room = surgery_room
                     break
 
-        patient.phase = Phase.SURGERY
-        self.surgery_room = free_room
-        self.surgery_room.take_room(patient, patient.doctors)
+        if patient.surgery_room == None:
+            patient.surgery_room = free_room
+            patient.phase = Phase.SURGERY
+            self.surgery_room = free_room
+            self.surgery_room.take_room(patient, patient.doctors)
