@@ -85,6 +85,12 @@ class Patient(threading.Thread):
                 time.sleep(random.uniform(1, 3))
 
             if self.phase == Phase.SURGERY:
+                if self.is_sitting:
+                    for chair in self.chairs:
+                        if chair.sitting_patient == self:
+                            chair.sitting_patient = None
+                            break
+                self.is_sitting = False                
                 time.sleep(random.uniform(1, 3))
 
             self.manage_patient_health_point()
