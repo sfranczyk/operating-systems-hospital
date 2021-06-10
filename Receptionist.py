@@ -5,7 +5,8 @@ class Receptionist:
 
     def __init__(self, id):
         self.id = id
-        self.current_patient = ""
+        self.current_patient = None
+        self.current_patient_name = None
 
         self.lock = Lock()
         self.patients_list = []
@@ -46,6 +47,7 @@ class Receptionist:
 
     def registration(self, patient_hp):
        number_of_needed_doctors = int(1 + 1 / patient_hp * 30 + random.uniform(0, 1))
+       
        return number_of_needed_doctors if number_of_needed_doctors < 5 else 5
 
 
