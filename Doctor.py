@@ -74,8 +74,7 @@ class Doctor(threading.Thread):
 
                 if self.current_coffee_machine and self.energy_points < self.max_energy_points:
                     self.energy_points += self.current_coffee_machine.drink_coffee()
-                    self.choosen_patient.health_points -= 1
-
+                   
                 if self.current_coffee_machine and self.energy_points >= self.max_energy_points:
                     self.current_coffee_machine.release()
                     self.current_coffee_machine = None

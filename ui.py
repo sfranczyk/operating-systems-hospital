@@ -36,6 +36,7 @@ class UserInterface(threading.Thread):
         while True:
             for patient in self.patients:
                 self.patientInfo(patient)
+                self.statisticsInfo(patient)
             for doctor in self.doctors:
                 self.doctorInfo(doctor)
             for chair in self.chairs:
@@ -51,6 +52,8 @@ class UserInterface(threading.Thread):
         self.displayText(patient.name, 0, int(patient.id), length=35)
         self.displayText(str(patient.health_points), 35, int(patient.id), length=15, color=3)
         self.displayText(str(patient.phase.name), 50, int(patient.id), length=50)
+        if patient.phase.name == 'QUEUE':
+            self.displayText(str(patient.current_receptionist.id), 60, int(patient.id), length=15)
         self.displayText(str(patient.doctors_needed), 75, int(patient.id), length=20)
 
     def doctorInfo(self, doctor):
@@ -58,6 +61,8 @@ class UserInterface(threading.Thread):
         self.displayText(str(doctor.energy_points), 130, doctor.id, length=25, color=2)
         if not doctor.choosen_patient == None:
             self.displayText(doctor.choosen_patient.name, 155, doctor.id, length=20)
+        else:
+            self.displayText("Free", 155, doctor.id, length=20)
         self.displayText(str(doctor.location.name), 175, doctor.id, length=20)
         if not doctor.surgery_room == None:
             self.displayText(str(doctor.surgery_room.id), 195, doctor.id, length=5)
@@ -89,10 +94,19 @@ class UserInterface(threading.Thread):
     def receptionistInfo(self, receptionist):
         self.displayText("Receptionist number: " + str(receptionist.id) + " is ", 0, 20 + receptionist.id)
 
-        if receptionist.current_patient == None:
+        if receptionist.current_patient == None or receptionist.current_patient_name == None:
             self.displayText(" free", 25, 20 + receptionist.id)
         else:
             self.displayText(" taken by: " + receptionist.current_patient_name, 25, 20 + receptionist.id)
+
+        # if len(receptionist.patients_list) > 0:
+        #     for i in range (len(receptionist.patients_list)):
+        #         self.displayText(str(receptionist.patients_list[i]), 30 + 8 * i, 20 + receptionist.id)
+
+    def statisticsInfo(self, patient):
+        self.displayText("All patients: " + str(patient.statistics.patients_total), 0, 24)
+        self.displayText("Healed patients: " + str(patient.statistics.patients_healed), 0, 25)
+        self.displayText("Dead patients: " + str(patient.statistics.patients_dead), 0, 26)
 
     def terminate(self):
         curses.nocbreak()

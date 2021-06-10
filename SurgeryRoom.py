@@ -35,11 +35,11 @@ class SurgeryRoom(threading.Thread):
     def complete_surgery(self):        
         self.lock.acquire()
         try:
-            self.doctors_number -= 1
-            if self.doctors_number == 0:
-                self.is_used = False
-                self.patient = None
-                self.doctors = []
-                self.patient = None
+            self.is_used = False
+            self.patient = None
+            self.doctors = []
+            self.patient = None
+        except:
+            pass
         finally:            
             self.lock.release()

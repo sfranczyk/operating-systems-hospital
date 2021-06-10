@@ -31,6 +31,7 @@ class Patient(threading.Thread):
         self.current_receptionist = None
         self.time_to_start_waiting_for_the_surgery = None
         self.surgery_room = None
+        self.number_of_queue_change = 0
 
         self.statistics: Statistics = statistics
         
@@ -41,7 +42,7 @@ class Patient(threading.Thread):
     # 4) Patient should waiting to surgery
 
     def run(self):
-        while(0 < self.health_points < Patient.max_hp):
+        while 0 < self.health_points < Patient.max_hp:
 
             if self.phase == Phase.START:
                 self.statistics.new_patient()
@@ -76,8 +77,7 @@ class Patient(threading.Thread):
                     self.chair_selection()
                     time.sleep(random.uniform(1, 3))
                 else:
-                    self.time_to_start_waiting_for_the_surgery = datetime.now()
-                    self.current_receptionist.exit_registration(id)
+                    self.time_to_start_waiting_for_the_surgery = datetime.now()                    
                     self.phase = Phase.WAITING_FOR_SURGERY
 
             if self.phase == Phase.WAITING_FOR_SURGERY:
@@ -89,35 +89,49 @@ class Patient(threading.Thread):
                 if self.is_sitting:
                     for chair in self.chairs:
                         if chair.sitting_patient == self:
-                            chair.sitting_patient = None
+                            chair.release_chair()                            
                             break
                 self.is_sitting = False                
                 time.sleep(random.uniform(1, 3))
 
             self.manage_patient_health_point()
-
-        if self.health_points >= self.max_hp:
+        
+        if self.health_points >= self.max_hp or self.health_points <= 0:
             for doctor in self.doctors:
                 doctor.choosen_patient = None
-                doctor.surgery_room.complete_surgery()
-                doctor.location = Location.CORRIDOR
-
-        if self.phase == Phase.HEALED or self.health_points >= self.max_hp:
-            self.statistics.patient_healed()
-
-        if self.phase == Phase.DEAD or self.health_points <= 0:
-            self.statistics.patient_died()
+                if doctor.surgery_room != None:
+                    doctor.surgery_room.complete_surgery()
+                doctor.surgery_room = None
+                doctor.location = Location.CORRIDOR        
 
     def manage_patient_health_point(self):
 
-        if self.health_points == Patient.max_hp:
-            self.phase == Phase.HEALED
+        if self.health_points >= Patient.max_hp:
+            self.phase = Phase.HEALED
 
         if self.phase != Phase.DEAD and self.phase != Phase.HEALED and self.phase != Phase.SURGERY:
             self.health_points -= 1
 
-        if self.health_points == 0:
-            self.phase == Phase.DEAD
+        if self.health_points <= 0:
+
+            if self.phase == Phase.QUEUE or self.phase == Phase.REGISTRATION:
+                self.current_receptionist.exit_queue(self.id)
+            
+            elif self.phase == Phase.CHAIR_SELECION:
+                if self.is_sitting:
+                    for chair in self.chairs:
+                        if chair.sitting_patient == self:
+                            chair.release_chair()                            
+                            break
+                self.is_sitting = False
+
+            self.phase = Phase.DEAD
+
+        if self.phase == Phase.HEALED:
+            self.statistics.patient_healed()
+
+        if self.phase == Phase.DEAD:
+            self.statistics.patient_died()
 
     def queue_selection(self):
         self.current_receptionist = min(
@@ -125,9 +139,9 @@ class Patient(threading.Thread):
         self.current_receptionist.join_queue(self.id)
 
     def behavior_in_the_registration_queue(self):
-        self.number_of_queue_change = 0
+        
+        for receptionist in self.receptionists:        
 
-        for receptionist in self.receptionists:
             if self.current_receptionist.get_position_in_queue(self.id) - self.number_of_queue_change > receptionist.get_length_queue():
                 self.change_queue(receptionist)
                 self.number_of_queue_change += 1

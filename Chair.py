@@ -13,7 +13,7 @@ class Chair:
         else:
             return False        
         
-    def take_surgery(self):
+    def release_chair(self):
         patient = self.sitting_patient = None
         self.sitting_patient = None
         self.place_taken.release()

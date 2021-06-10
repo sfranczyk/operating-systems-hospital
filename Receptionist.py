@@ -29,9 +29,8 @@ class Receptionist:
         self.lock.acquire()
         try:
             if not self.current_patient:
-                self.current_patient = id  
-            else:
-                self.patients_list.append(id)
+                self.current_patient = id                
+            self.patients_list.append(id)
         finally:
             self.lock.release()
 
@@ -55,17 +54,25 @@ class Receptionist:
     def exit_registration(self, id):
         self.lock.acquire()
         try:
-            if (id == self.current_patient):
-                if not self.patients_list:
-                    self.current_patient = None  
-                else:
-                    self.patients_list.pop(0)
-                    if len(self.patients_list) > 0:
-                        self.current_patient = self.patients_list[0]
-            else:
-                try:
-                    self.patients_list.remove(id)
-                except ValueError:
-                    pass
+
+            self.current_patient = None
+            self.current_patient_name = None
+            self.patients_list.pop(0)
+
+            if len(self.patients_list) > 0:
+                self.current_patient = self.patients_list[0]
+
+            # if (id == self.current_patient):
+            #     if not self.patients_list:
+            #         self.current_patient = None  
+            #     else:
+            #         self.patients_list.pop(0)
+            #         if len(self.patients_list) > 0:
+            #             self.current_patient = self.patients_list[0]
+            # else:
+            #     try:
+            #         self.patients_list.remove(id)
+            #     except ValueError:
+            #         pass
         finally:
             self.lock.release()
