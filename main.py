@@ -7,6 +7,7 @@ from Receptionist import Receptionist
 from Location import Location
 from Patient import Patient
 from Chair import Chair
+from patient_finished import Patient_Finished
 
 
 def main():
@@ -61,12 +62,16 @@ def main():
     interface = UserInterface(chairs=ch_list, coffee_machines=coffee_list, doctors=doctor_list,
                               patients=p_list, receptionists=r_list, surgery_rooms=surgery_rooms)
 
+    patient_manager = Patient_Finished(
+        patients=p_list, receptionists=r_list, chairs=ch_list, statistics=statistics)
+
     for doctor in doctor_list:
         doctor.start()
 
     for patient in p_list:
         patient.start()
 
+    patient_manager.start()
     interface.start()
 
     for patient in p_list:
@@ -75,6 +80,7 @@ def main():
     for doctor in doctor_list:
         doctor.join()
 
+    patient_manager.join()
     interface.join()
 
 

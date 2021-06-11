@@ -26,6 +26,7 @@ class UserInterface(threading.Thread):
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+        curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
         self.win = curses.newwin(
             self.height, self.width, self.begin_y, self.begin_x)
@@ -73,13 +74,13 @@ class UserInterface(threading.Thread):
         if chair.sitting_patient == None:
             self.displayText("free", 20, 10 + chair.id)
         else:
-            self.displayText("taken by: " + chair.sitting_patient.name, 20, 10 + chair.id)
+            self.displayText("taken by: " + chair.sitting_patient.name, 20, 10 + chair.id, color=3)
 
     def surgeryRoomInfo(self, surgery_room):
         self.displayText("Surgery room number: " + str(surgery_room.id) + " is: ", 0, 14 + surgery_room.id)
 
         if surgery_room.is_used:
-            self.displayText(" occupied by: " + surgery_room.patient.name, 25, 14 + surgery_room.id)
+            self.displayText(" occupied by: " + surgery_room.patient.name, 25, 14 + surgery_room.id, color=3)
         else:
             self.displayText(" free", 25, 14 + surgery_room.id)
 
@@ -89,7 +90,7 @@ class UserInterface(threading.Thread):
         if coffee_machine.doctor_id == None:
             self.displayText(" free", 28, 17 + coffee_machine.id)
         else:
-            self.displayText(" taken by: " + str(coffee_machine.doctor_name), 28, 17 + coffee_machine.id)
+            self.displayText(" taken by: " + str(coffee_machine.doctor_name), 28, 17 + coffee_machine.id, color=3)
 
     def receptionistInfo(self, receptionist):
         self.displayText("Receptionist number: " + str(receptionist.id) + " is ", 0, 20 + receptionist.id)
@@ -97,16 +98,16 @@ class UserInterface(threading.Thread):
         if receptionist.current_patient == None or receptionist.current_patient_name == None:
             self.displayText(" free", 25, 20 + receptionist.id)
         else:
-            self.displayText(" taken by: " + receptionist.current_patient_name, 25, 20 + receptionist.id)
-
-        # if len(receptionist.patients_list) > 0:
-        #     for i in range (len(receptionist.patients_list)):
-        #         self.displayText(str(receptionist.patients_list[i]), 30 + 8 * i, 20 + receptionist.id)
+            self.displayText(" taken by: " + receptionist.current_patient_name, 25, 20 + receptionist.id, color=3)
 
     def statisticsInfo(self, patient):
-        self.displayText("All patients: " + str(patient.statistics.patients_total), 0, 24)
-        self.displayText("Healed patients: " + str(patient.statistics.patients_healed), 0, 25)
-        self.displayText("Dead patients: " + str(patient.statistics.patients_dead), 0, 26)
+        if patient != None and patient.statistics != None:
+            self.displayText("All patients: ", 0, 24)
+            self.displayText(str(patient.statistics.patients_total), 19, 24, color=3)
+            self.displayText("Healed patients: ", 0, 25)
+            self.displayText(str(patient.statistics.patients_healed), 19, 25, color=3)
+            self.displayText("Dead patients: ", 0, 26)
+            self.displayText(str(patient.statistics.patients_dead), 19, 26, color=3)
 
     def terminate(self):
         curses.nocbreak()
@@ -125,12 +126,12 @@ class UserInterface(threading.Thread):
         self.win.refresh()
 
     def displayHeaders(self):
-        self.displayText('Pacjent', 0, 0)
-        self.displayText('Punkty zycia', 35, 0)
-        self.displayText('Lokalizacja', 50, 0)
-        self.displayText('Potrzebni lekarze', 75, 0)
-        self.displayText('Lekarz', 100, 0)
-        self.displayText('Punkty energii', 130, 0)
-        self.displayText('Leczony pacjent', 155, 0)
-        self.displayText('Lokalizacja', 175, 0)
-        self.displayText('Sala', 195, 0)
+        self.displayText('Patient name', 0, 0, color=4)
+        self.displayText('Health points', 35, 0, color=4)
+        self.displayText('Location', 50, 0, color=4)
+        self.displayText('Needed doctors', 75, 0, color=4)
+        self.displayText('Doctor', 100, 0, color=4)
+        self.displayText('Energy points', 130, 0, color=4)
+        self.displayText('Current patient', 155, 0, color=4)
+        self.displayText('Location', 175, 0, color=4)
+        self.displayText('Surgery Room', 195, 0, color=4)

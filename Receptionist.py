@@ -57,7 +57,7 @@ class Receptionist:
 
             self.current_patient = None
             self.current_patient_name = None
-            self.patients_list.pop(0)
+            self.patients_list.remove(id)
 
             if len(self.patients_list) > 0:
                 self.current_patient = self.patients_list[0]
