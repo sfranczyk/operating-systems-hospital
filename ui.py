@@ -31,10 +31,12 @@ class UserInterface(threading.Thread):
         self.win = curses.newwin(
             self.height, self.width, self.begin_y, self.begin_x)
 
+        self.kill = False
+
     def run(self):
         self.displayHeaders()
 
-        while True:
+        while not self.kill:
             for patient in self.patients:
                 self.patientInfo(patient)
                 self.statisticsInfo(patient)
@@ -47,7 +49,9 @@ class UserInterface(threading.Thread):
             for coffee_machine in self.coffee_machines:
                 self.coffeMachineInfo(coffee_machine)
             for receptionist in self.receptionists:
-                self.receptionistInfo(receptionist)            
+                self.receptionistInfo(receptionist)
+
+        self.terminate()
 
     def patientInfo(self, patient):
         self.displayText(patient.name, 0, int(patient.id), length=35)

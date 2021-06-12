@@ -2,7 +2,7 @@ from Location import Location
 import threading
 from Phase import Phase
 import random
-from Patient import Patient
+from patient import Patient
 from Location import Location
 
 
@@ -15,6 +15,7 @@ class Patient_Finished(threading.Thread):
         self.receptionists = receptionists
         self.chairs = chairs
         self.statistisc = statistics
+        self.kill = False
 
     def get_name(self):
 
@@ -28,20 +29,25 @@ class Patient_Finished(threading.Thread):
         health_points = random.randint(5, 99)
         patient_name = self.get_name()
 
-        patient = Patient(id=id, hp=health_points,
-                          name=patient_name, location=Location.RECEPTION, receptionists=self.receptionists, chairs=self.chairs, statistics=self.statistisc)
+        patient = Patient(
+            id=id, 
+            hp=health_points,
+            name=patient_name,
+            receptionists=self.receptionists, 
+            chairs=self.chairs, 
+            statistics=self.statistisc
+            )
 
         self.patients.append(patient)
 
         return patient
 
     def run(self):
-        while True:
+        while not self.kill:
 
             for patient in self.patients:
                 if patient.phase in [Phase.DEAD, Phase.HEALED]:
                     id_for_new_patient = patient.id
-                    patient.join()
                     self.patients.remove(patient)
                     new_patient = self.create_new_patient(id_for_new_patient)
 

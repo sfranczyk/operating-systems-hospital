@@ -1,11 +1,12 @@
-from CoffeeMachine import CoffeeMachine
-from Patient import Patient
-from SurgeryRoom import SurgeryRoom
-from Location import Location
-from datetime import datetime
+import datetime
 import threading
 import random
 import time
+import getch
+from CoffeeMachine import CoffeeMachine
+from patient import Patient
+from SurgeryRoom import SurgeryRoom
+from Location import Location
 from Phase import Phase
 
 
@@ -23,14 +24,15 @@ class Doctor(threading.Thread):
         self.surgery_room: SurgeryRoom = None
         self.surgery_rooms = surgery_rooms
         self.coffee_machines = coffee_machines
-        self.current_coffee_machine: CoffeeMachine = None        
+        self.current_coffee_machine: CoffeeMachine = None
+        self.kill = False
 
     def run(self):
-        while(True):
-
+        while not self.kill:
+            
             if self.location == Location.CORRIDOR:
 
-                if self.choosen_patient == None:
+                if not self.choosen_patient:
                     self.choose_patient()
                 else:
                     if self.choosen_patient.current_doctors_number >= self.choosen_patient.doctors_needed:                        
@@ -59,16 +61,16 @@ class Doctor(threading.Thread):
                         self.surgery_room.start_surgery()
 
                 else:
-                    if self.choosen_patient != None:
+                    if self.choosen_patient:
                         self.choosen_patient.phase = Phase.SURGERY
                         self.choosen_patient.health_points += 5
                         self.energy_points -= 1
-                                                                
+                   
             if self.location == Location.MEDICAL_ROOM:
-                
+
                 if not self.current_coffee_machine:
                     for machine in self.coffee_machines:
-                        if(machine.try_take(self.id, self.name)):
+                        if machine.try_take(self.id, self.name):
                             self.current_coffee_machine = machine
                             break
 
@@ -87,7 +89,7 @@ class Doctor(threading.Thread):
         max_points = 0
 
         for chair in self.chairs:
-            if chair.sitting_patient != None:
+            if chair.sitting_patient:
 
                 if chair.sitting_patient.current_doctors_number < chair.sitting_patient.doctors_needed:
                     actual_points = 2 * chair.sitting_patient.health_points
@@ -95,7 +97,7 @@ class Doctor(threading.Thread):
                         max_points = actual_points
                         most_valuable_patient = chair.sitting_patient
 
-        if most_valuable_patient != None:            
+        if most_valuable_patient:            
             most_valuable_patient.current_doctors_number += 1
             most_valuable_patient.doctors.append(self)
             self.choosen_patient = most_valuable_patient
@@ -103,14 +105,13 @@ class Doctor(threading.Thread):
     def start_surgery(self, patient):
 
         free_room: SurgeryRoom = None
-       
-        while not free_room and patient.surgery_room == None:
+        while not free_room and not patient.surgery_room:
             for surgery_room in self.surgery_rooms:
-                if surgery_room.is_used == False:
+                if not surgery_room.is_used:
                     free_room = surgery_room
                     break
 
-        if patient.surgery_room == None:
+        if not patient.surgery_room:
             patient.surgery_room = free_room
             patient.phase = Phase.SURGERY
             self.surgery_room = free_room

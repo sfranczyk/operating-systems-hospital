@@ -5,10 +5,23 @@ from Doctor import Doctor
 from Statistics import Statistics
 from Receptionist import Receptionist
 from Location import Location
-from Patient import Patient
+from patient import Patient
 from Chair import Chair
 from patient_finished import Patient_Finished
+import threading
 
+def killer_run(p_list,doctor_list,patient_manager,interface):
+    killer = 's'
+    while not killer in ['Q', 'q']:
+        killer  = interface.win.getkey()
+    for patient in p_list:
+        patient.kill = True
+
+    for doctor in doctor_list:
+        doctor.kill = True
+
+    patient_manager.kill = True
+    interface.kill = True
 
 def main():
 
@@ -21,19 +34,19 @@ def main():
     r_list = [r1, r2]
     ch_list = [ch1, ch2]
 
-    p1 = Patient(id=1, hp=85, name="Patric", location=Location.RECEPTION,
+    p1 = Patient(id=1, hp=85, name="Patric",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p2 = Patient(id=2, hp=93, name="Danil", location=Location.RECEPTION,
+    p2 = Patient(id=2, hp=93, name="Danil",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p3 = Patient(id=3, hp=30, name="Bernard", location=Location.RECEPTION,
+    p3 = Patient(id=3, hp=30, name="Bernard",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p4 = Patient(id=4, hp=41, name="Stefan", location=Location.RECEPTION,
+    p4 = Patient(id=4, hp=41, name="Stefan", 
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p5 = Patient(id=5, hp=12, name="Carl", location=Location.RECEPTION,
+    p5 = Patient(id=5, hp=12, name="Carl",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p6 = Patient(id=6, hp=92, name="Joe", location=Location.RECEPTION,
+    p6 = Patient(id=6, hp=92, name="Joe",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p7 = Patient(id=7, hp=55, name="Steven", location=Location.RECEPTION,
+    p7 = Patient(id=7, hp=55, name="Steven",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
 
     p_list = [p1, p2, p3, p4, p5, p6, p7]
@@ -74,11 +87,16 @@ def main():
     patient_manager.start()
     interface.start()
 
-    for patient in p_list:
-        patient.join()
+    killer = threading.Thread(target=killer_run, args=(p_list,doctor_list,patient_manager,interface))
+    killer.start()
+    killer.join()
 
+    
     for doctor in doctor_list:
         doctor.join()
+
+    for patient in p_list:
+        patient.join()
 
     patient_manager.join()
     interface.join()

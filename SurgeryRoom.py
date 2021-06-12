@@ -1,5 +1,5 @@
 from Location import Location
-from Patient import Patient
+from patient import Patient
 import threading
 
 class SurgeryRoom(threading.Thread):
