@@ -51,6 +51,8 @@ class UserInterface(threading.Thread):
             for receptionist in self.receptionists:
                 self.receptionistInfo(receptionist)
 
+            self.displayText("Press Q to exit", 0, 28, color=3)
+
         self.terminate()
 
     def patientInfo(self, patient):
@@ -58,8 +60,8 @@ class UserInterface(threading.Thread):
         self.displayText(str(patient.health_points), 35, int(patient.id), length=15, color=3)
         self.displayText(str(patient.phase.name), 50, int(patient.id), length=50)
         if patient.phase.name == 'QUEUE':
-            self.displayText(str(patient.current_receptionist.id), 60, int(patient.id), length=15)
-        self.displayText(str(patient.doctors_needed), 75, int(patient.id), length=20)
+            self.displayText(" number: " + str(patient.current_receptionist.id), 55, int(patient.id), length=15, color=3)
+        self.displayText(str(patient.doctors_needed), 75, int(patient.id), length=20, color=3)
 
     def doctorInfo(self, doctor):
         self.displayText(doctor.name, 100, doctor.id, length=30)
@@ -73,12 +75,12 @@ class UserInterface(threading.Thread):
             self.displayText(str(doctor.surgery_room.id), 195, doctor.id, length=5)
 
     def chairInfo(self, chair):       
-        self.displayText("Chair number: " + str(chair.id) + " is: ", 0, 10 + chair.id)
+        self.displayText("Chair number: " + str(chair.id) + " is: ", 0, 11 + chair.id)
 
         if chair.sitting_patient == None:
-            self.displayText("free", 20, 10 + chair.id)
+            self.displayText("free", 20, 11 + chair.id)
         else:
-            self.displayText("taken by: " + chair.sitting_patient.name, 20, 10 + chair.id, color=3)
+            self.displayText("taken by: " + chair.sitting_patient.name, 20, 11 + chair.id, color=3)
 
     def surgeryRoomInfo(self, surgery_room):
         self.displayText("Surgery room number: " + str(surgery_room.id) + " is: ", 0, 14 + surgery_room.id)

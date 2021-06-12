@@ -46,7 +46,7 @@ def main():
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
     p6 = Patient(id=6, hp=92, name="Joe",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
-    p7 = Patient(id=7, hp=55, name="Steven",
+    p7 = Patient(id=7, hp=55, name="Anna",
                  receptionists=r_list, chairs=ch_list, statistics=statistics)
 
     p_list = [p1, p2, p3, p4, p5, p6, p7]
@@ -59,15 +59,15 @@ def main():
     coffee_list = [coffee1, coffee2]
     surgery_rooms = [surgeryRoom1, surgeryRoom2]
 
-    d1 = Doctor(id=1, name="Dr Nowak", energy_points=5, chairs=ch_list,
+    d1 = Doctor(id=1, name="Dr Nowacka", energy_points=35, chairs=ch_list,
                 location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d2 = Doctor(id=2, name="Dr Kowalski", energy_points=5, chairs=ch_list,
+    d2 = Doctor(id=2, name="Dr Kowalski", energy_points=15, chairs=ch_list,
                 location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
     d3 = Doctor(id=3, name="Dr Wozniak", energy_points=5, chairs=ch_list,
                 location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d4 = Doctor(id=4, name="Profesor Kowalczyk", energy_points=5, chairs=ch_list,
+    d4 = Doctor(id=4, name="Profesor Kowalczyk", energy_points=45, chairs=ch_list,
                 location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
-    d5 = Doctor(id=5, name="Dr Zelazna", energy_points=5, chairs=ch_list,
+    d5 = Doctor(id=5, name="Dr Wojtasik", energy_points=65, chairs=ch_list,
                 location=Location.CORRIDOR, coffee_machines=coffee_list, surgery_rooms=surgery_rooms)
 
     doctor_list = [d1, d2, d3, d4, d5]

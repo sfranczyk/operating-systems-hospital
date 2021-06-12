@@ -29,6 +29,8 @@ class Patient(threading.Thread):
         self.number_of_queue_change = 0
         self.current_chair = None
 
+        self.lock = threading.Lock()
+
         self.statistics: Statistics = statistics
 
         self.kill = False
@@ -41,6 +43,8 @@ class Patient(threading.Thread):
 
     def run(self):
         while 0 < self.health_points < Patient.max_hp and not self.kill:
+
+            self.lock.acquire()
 
             if self.phase == Phase.START:
                 self.statistics.new_patient()
@@ -131,6 +135,8 @@ class Patient(threading.Thread):
 
         if self.phase == Phase.DEAD:
             self.statistics.patient_died()
+
+        self.lock.release()
 
     def queue_selection(self):
         self.current_receptionist = min(

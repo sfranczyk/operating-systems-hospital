@@ -20,7 +20,7 @@ class Patient_Finished(threading.Thread):
     def get_name(self):
 
         names = ['Steve', 'Cornel', 'Alex', 'Yanna',
-                 'Max', 'Stefanie', 'Oleg', 'Olga', 'Wojtek', 'Karolina', 'Kornelia']
+                 'Max', 'Stefanie', 'Oleg', 'Olga', 'Wojtek', 'Karolina', 'Kornelia', 'Michal', 'Bogdan', 'Dominika', 'Michalina']
 
         return names[random.randint(0, len(names) - 1)]
 
@@ -30,13 +30,13 @@ class Patient_Finished(threading.Thread):
         patient_name = self.get_name()
 
         patient = Patient(
-            id=id, 
+            id=id,
             hp=health_points,
             name=patient_name,
-            receptionists=self.receptionists, 
-            chairs=self.chairs, 
+            receptionists=self.receptionists,
+            chairs=self.chairs,
             statistics=self.statistisc
-            )
+        )
 
         self.patients.append(patient)
 
@@ -47,9 +47,17 @@ class Patient_Finished(threading.Thread):
 
             for patient in self.patients:
                 if patient.phase in [Phase.DEAD, Phase.HEALED]:
+
+                    if patient.current_receptionist.get_position_in_queue(patient.id) == 0:
+                        patient.current_receptionist.exit_registration(
+                            patient.id)
+
+                    if patient.current_chair:
+                        patient.current_chair.release_chair()
+                        patient.current_chair = None
+
                     id_for_new_patient = patient.id
                     self.patients.remove(patient)
                     new_patient = self.create_new_patient(id_for_new_patient)
 
                     new_patient.start()
-                    
